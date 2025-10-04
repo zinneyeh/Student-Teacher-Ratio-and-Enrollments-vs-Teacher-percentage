@@ -1,0 +1,121 @@
+---
+title: "final project"
+author: "Zin Min Thnat"
+date: "2025-04-18"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+
+
+```{r}
+library(tidyverse)
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+setwd("C:/Users/zinmi/Downloads/")
+getwd()
+```
+
+```{r}
+Student_Teacher_Ratio<-read.csv("Student Teacher Ratio by District 2025.csv")
+str(Student_Teacher_Ratio)
+```
+```{r}
+colnames(Student_Teacher_Ratio)
+```
+
+```{r}
+Student_Teacher_Ratio_long <-Student_Teacher_Ratio %>%
+  pivot_longer(
+    cols = starts_with("Ratio_"),
+    names_to = "Year",
+    values_to = "Ratio"
+  ) %>%
+  mutate(Year = str_remove(Year, "Ratio_")) 
+ggplot(Student_Teacher_Ratio_long, aes(x = Year, y = Ratio, group = District, color = District)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Student-Teacher Ratio by District (2021–2025)",
+    x = "Year",
+    y = "Student-Teacher Ratio"
+  ) +
+  theme_minimal()
+```
+    
+```{r}
+
+```
+
+```{r}
+setwd("C:/Users/zinmi/Downloads/")
+getwd()
+```
+
+```{r}
+Student_Teacher_Ratio<-read.csv("Student Teacher Ratio by state total.csv")
+str(Student_Teacher_Ratio)
+```
+
+
+
+```{r}
+data <- data.frame(
+  District = c("State Total", "State Total", "State Total", "State Total", "State Total"),
+  Year = c(2025, 2024, 2023, 2022, 2021),
+  Enrollment = c(158016, 157258, 159283, 160593, 141154),
+  Teachers = c(14154, 13910, 14154, 13995, 14154)
+)
+
+
+data_long <- data %>%
+  pivot_longer(cols = c(Enrollment, Teachers), 
+               names_to = "Category", 
+               values_to = "Value") %>%
+  group_by(Year) %>%
+  mutate(Percent = Value / sum(Value) * 100)
+
+
+ggplot(data_long, aes(x = factor(Year), y = Percent, fill = Category)) +
+  geom_bar(stat = "identity") +
+  geom_text(
+    aes(label = paste0(round(Percent, 1), "%")),
+    position = position_stack(vjust = 0.5),
+    color = "white",
+    size = 4
+  ) +
+  labs(
+    title = "Enrollment vs Teachers as Percentage by Year",
+    x = "Year",
+    y = "Percentage"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+
